@@ -2,14 +2,40 @@
 #include <iostream>
 
 namespace renderer {
-	ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader) {
+	ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath) {
 		GLuint vertexShaderID;
-		if (!createShader(vertexShader,GL_VERTEX_SHADER, vertexShaderID)) {
+		std::string vertexCode;
+		std::string fragmentCode;
+		std::ifstream vShaderFile;
+		std::ifstream fShaderFile;
+		vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		try {
+			vShaderFile.open(vertexPath);
+			fShaderFile.open(fragmentPath);
+			std::stringstream vShaderStream, fShaderStream;
+			vShaderStream << vShaderFile.rdbuf();
+			fShaderStream << fShaderFile.rdbuf();
+			
+			vertexCode = vShaderStream.str();
+
+			fragmentCode = fShaderStream.str();
+			vShaderFile.close();
+			fShaderFile.close();
+
+		}
+
+		catch (std::ifstream::failure e)
+		{
+			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+			
+		}
+		if (!createShader(vertexCode,GL_VERTEX_SHADER, vertexShaderID)) {
 			std::cerr << "VERTEX SHADER COMPILE TIME ERROR" << std::endl;
 			return;
 		}
 		GLuint fragmentShaderID;
-		if (!createShader(fragmentShader, GL_FRAGMENT_SHADER, fragmentShaderID)) {
+		if (!createShader(fragmentCode, GL_FRAGMENT_SHADER, fragmentShaderID)) {
 			std::cerr << "FRAAGMENT SHADER COMPILE TIME ERROR" << std::endl;
 			glCompileShader(vertexShaderID);
 			return;
@@ -51,6 +77,7 @@ namespace renderer {
 	void ShaderProgram::use() const {
 		glUseProgram(m_ID);
 	}
+	
 	ShaderProgram::~ShaderProgram() {
 		glDeleteProgram(m_ID);
 	}

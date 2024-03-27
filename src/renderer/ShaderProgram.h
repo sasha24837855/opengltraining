@@ -1,6 +1,10 @@
 #pragma once
 #include <string>
 #include <glad/glad.h>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 namespace renderer {
 	class ShaderProgram {
 	public:
@@ -8,7 +12,7 @@ namespace renderer {
 		~ShaderProgram();
 		bool isCompiled() const { return m_isCompiled; };
 		void use() const;
-
+		GLuint getm_ID() { return m_ID; };
 		ShaderProgram() = delete;
 		ShaderProgram(ShaderProgram&) = delete;
 		ShaderProgram& operator =(const ShaderProgram&) = delete;

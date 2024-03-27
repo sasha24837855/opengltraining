@@ -6,33 +6,35 @@ using namespace std;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 GLfloat point[] =
 {
--0.0f,0.5f,0.0f,
-0.5f,-0.5f,0.0f,
--0.5f,-0.5f,0.0f,
+-1.0f,-0.5f,0.0f,
+0.0f,-0.5f,0.0f,
+-0.5f,0.5f,0.0f,
+
+0.0f,-0.5f,0.0f,
+0.5f,0.5f,0.0f,
+1.0f,-0.5f,0.0f,
 };
 GLfloat colors[] = {
+//1.0f,0.0f,0.0f,
+//0.0f,1.0f,0.0f,
+//0.0f,0.0f,1.0f,
 1.0f,0.0f,0.0f,
+1.0f,0.0f,0.0f,
+1.0f,0.0f,0.0f,
+
 0.0f,1.0f,0.0f,
-0.0f,0.0f,1.0f,
+0.0f,1.0f,0.0f,
+0.0f,1.0f,0.0f,
+
 
 };
+GLfloat colors2[] = {
+0.0f,0.0f,1.0f,
+0.0f,0.0f,1.0f,
+0.0f,0.0f,1.0f,
+};
 
-const char* vertex_shader =
-"#version 330\n"
-"layout(location = 0) in vec3 vertex_position;"
-"layout(location = 1) in vec3 vertex_color;"
-"out vec3 color;"
-"void main(){"
-"color = vertex_color;"
-"gl_Position = vec4(vertex_position,1.0);"
-"}";
-const char* fragment_shader =
-"#version 330\n"
-"in vec3 color;"
-"out vec4 frag_color;"
-"void main(){"
-"frag_color = vec4(color,1.0);"
-"}";
+
 int windowSizeX = 640;
 int windowSizeY = 480;
 int main() {
@@ -58,9 +60,9 @@ int main() {
 	}
 	glClearColor(1, 1, 0.4, 1);
 	
-	std::string vertexShader(vertex_shader);
-	std::string fragmentShader(fragment_shader);
-	renderer::ShaderProgram shaderProgram(vertexShader, fragmentShader);
+	
+	renderer::ShaderProgram shaderProgram("C:/proekti/opengltraining/src/renderer/Vshader.txt",
+											"C:/proekti/opengltraining/src/renderer/Fshader.txt");
 	if (!shaderProgram.isCompiled()) {
 		std::cerr << "cant create shader program" << std::endl;
 	}
@@ -68,7 +70,8 @@ int main() {
 	GLuint points_vbo = 0;
 	glGenBuffers(1, &points_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 9*sizeof(GLint), point, GL_STATIC_DRAW);
+
 
 	GLuint colors_vbo = 0;
 	glGenBuffers(1, &colors_vbo);
@@ -76,6 +79,7 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
 	GLuint vao = 0;
+	
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -84,17 +88,23 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	//glEnableVertexAttribArray(1);
+	//glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
+		float timeValue = glfwGetTime();
+		float greenValue = sin(timeValue);
+		int vertexColorLocation = glGetUniformLocation(shaderProgram.getm_ID(), "color");
 
 		shaderProgram.use();
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
