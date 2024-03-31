@@ -2,6 +2,9 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "renderer/ShaderProgram.h"
+#include <external/glm/glm.hpp>
+#include <external/glm/gtc/matrix_transform.hpp>
+#include <external/glm/gtc/type_ptr.hpp>
 using namespace std;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 GLfloat point[] =
@@ -97,11 +100,19 @@ int main() {
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 		float timeValue = glfwGetTime();
-		float greenValue = sin(timeValue);
+		float greenValue = sin(tan(timeValue));
 		int vertexColorLocation = glGetUniformLocation(shaderProgram.getm_ID(), "color");
 
+		int vertex1LocationLocation = glGetUniformLocation(shaderProgram.getm_ID(), "vertex1");
+		int vertex2LocationLocation = glGetUniformLocation(shaderProgram.getm_ID(), "vertex2");
+		int vertex3LocationLocation = glGetUniformLocation(shaderProgram.getm_ID(), "vertex3");
+
+
 		shaderProgram.use();
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		glUniform4f(vertexColorLocation, sin(timeValue), cos(timeValue), sin(timeValue), 1.0f);
+		glUniform3f(vertex1LocationLocation, sin(timeValue), sin(timeValue), point[2]);
+		glUniform3f(vertex2LocationLocation, cos(timeValue), sin(timeValue), point[5]);
+		glUniform3f(vertex3LocationLocation, sin(timeValue), cos(timeValue), point[8]);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
