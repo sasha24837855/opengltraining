@@ -7,7 +7,7 @@ set( GLFW_BUILD_TESTS OFF CACHE BOOL  "" )
 set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL  "" )
 set( GLFW_INSTALL OFF CACHE BOOL  "" )
 
-add_executable(${PROJECT_NAME} src/main.cpp src/renderer/ShaderProgram.cpp src/renderer/ShaderProgram.h)
+add_executable(${PROJECT_NAME} src/main.cpp src/renderer/ShaderProgram.cpp src/renderer/ShaderProgram.h src/stb/stb_image.h src/stb/stb_image.cpp)
 add_subdirectory(external/glfw)
 target_link_libraries(${PROJECT_NAME} glfw)
 find_package(OpenGL REQUIRED)
